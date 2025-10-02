@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Service</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f9f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 95%;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      overflow-x: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #38a169;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    thead th {
+      background-color: #38a169;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 16px;
+      text-align: left;
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      color: #333;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f0f0f0;
+      transition: background 0.2s ease;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 12px 26px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      background: #38a169;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .button:hover {
+      background: #276749;
+      transform: scale(1.05);
+    }
+
+    .button:active {
+      transform: scale(0.97);
+    }
+
+    .btn-wrapper {
+      text-align: center;
+    }
+
+    footer {
+      margin-top: auto;
+      background-color: #ffffff;
+      padding: 5px;
+      color: #666;
+      font-size: 1rem;
+      text-align: center;
+      border-top: 1px solid #eaeaea;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Daftar Service</h1>
+    <table id="serviceTable">
+      <thead>
+        <tr>
+          <th>Nomer</th>
+          <th>Tanggal</th>
+          <th>Device</th>
+          <th>Merek</th>
+          <th>Tipe</th>
+          <th>Kerusakan</th>
+          <th>Kelengkapan</th>
+          <th>Penanganan</th>
+          <th>Biaya</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="btn-wrapper">
+      <button class="button" onclick="window.location.href='index.html'">Kembali</button>
+    </div>
+  </div>
+
+  <footer>
+    <p> &copy; Arsy, 2025</p>
+  </footer>
+
+  <script>
+    const url = "https://script.google.com/macros/s/AKfycbz7x8nvGFXOWIFo56oagBqh_A4icopZf7tt9lEIv3uraVgMLAD_w_CvQz5y6aa6cpmo8A/exec";
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.querySelector("#serviceTable tbody");
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.nomer}</td>
+            <td>${row.timestamp}</td>
+            <td>${row.service}</td>
+            <td>${row.merek}</td>
+            <td>${row.tipe}</td>
+            <td>${row.kerusakan}</td>
+            <td>${row.kelengkapan}</td>
+            <td>${row.penanganan}</td>
+            <td>${row.biaya}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => console.error("Gagal mengambil data:", err));
+  </script>
+</body>
+
+</html>
