@@ -85,6 +85,10 @@
     }
 
     .button-container button {
+      display: inline-flex;         
+      align-items: center;          
+      justify-content: center;
+      gap: 10px;                    
       background-color: #38a169;
       color: white;
       border: 2px solid #38a169;
@@ -95,8 +99,9 @@
       text-transform: uppercase;
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.3s ease;
-      display: inline-block;
       margin: 10px;
+      position: relative;
+      box-sizing: border-box;
     }
 
     .button-container button:hover {
@@ -117,6 +122,31 @@
     .back-button:hover {
       background-color: #c53030;
       border-color: #c53030;
+    }
+
+    button.loading {
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    button.loading::after {
+      content: "";
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     @media (max-width: 768px) {
@@ -157,7 +187,7 @@
 
 <body>
   <div class="container">
-    <h1>Review dan Pengananan Form</h1>
+    <h1>Review dan Penanganan Form</h1>
     <div class="review-container" id="review-container">
     </div>
 
@@ -173,7 +203,7 @@
 
       <div class="button-container">
         <button type="button" class="back-button" onclick="window.location.href='Service_IN.html'">Edit</button>
-        <button type="submit" onclick="reviewForm()">Lanjut</button>
+        <button type="submit" id="submitBtn">Lanjut</button>
       </div>
     </form>
   </div>
@@ -182,37 +212,45 @@
     <p> &copy; Arsy, 2025</p>
   </footer>
 
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz7x8nvGFXOWIFo56oagBqh_A4icopZf7tt9lEIv3uraVgMLAD_w_CvQz5y6aa6cpmo8A/exec'
+    const form = document.forms['input2']
+    const submitButton = document.getElementById("submitBtn");
 
-<script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbz7x8nvGFXOWIFo56oagBqh_A4icopZf7tt9lEIv3uraVgMLAD_w_CvQz5y6aa6cpmo8A/exec'
-  const form = document.forms['input2']
+    form.addEventListener('submit', e => {
+      e.preventDefault();
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
+      submitButton.disabled = true;
+      submitButton.classList.add("loading");
+      submitButton.textContent = "Mengirim...";
 
-    const penanganan = document.getElementById('penanganan').value;
-    const biaya = document.getElementById('biaya').value;
+      const penanganan = document.getElementById('penanganan').value;
+      const biaya = document.getElementById('biaya').value;
 
-    const savedData = JSON.parse(localStorage.getItem('formData')) || {};
-    savedData.penanganan = penanganan;
-    savedData.biaya = biaya;
+      const savedData = JSON.parse(localStorage.getItem('formData')) || {};
+      savedData.penanganan = penanganan;
+      savedData.biaya = biaya;
 
-    localStorage.setItem('allFormData', JSON.stringify(savedData));
+      localStorage.setItem('allFormData', JSON.stringify(savedData));
 
-    const formData = new FormData(form);
-    for (let key in savedData) {
-      formData.append(key, savedData[key]);
-    }
+      const formData = new FormData(form);
+      for (let key in savedData) {
+        formData.append(key, savedData[key]);
+      }
 
-    fetch(scriptURL, { method: 'POST', body: formData })
-      .then(response => {
-        console.log('Success!', response);
-        window.location.href = 'complete_review.html';
-      })
-      .catch(error => console.error('Error!', error.message));
-  });
-</script>
-
+      fetch(scriptURL, { method: 'POST', body: formData })
+        .then(response => {
+          console.log('Success!', response);
+          window.location.href = 'complete_review.html';
+        })
+        .catch(error => {
+          console.error('Error!', error.message);
+          submitButton.disabled = false;
+          submitButton.classList.remove("loading");
+          submitButton.textContent = "Lanjut";
+        });
+    });
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -221,33 +259,18 @@
 
       if (formData) {
         reviewContainer.innerHTML = `
-                    <p><strong>Nomer:</strong> ${formData.nomer}</p>
-                    <p><strong>Tanggal:</strong> ${formData.tanggal}</p>
-                    <p><strong>Device:</strong> ${formData.service}</p>
-                    <p><strong>Merek:</strong> ${formData.merek}</p>
-                    <p><strong>Tipe:</strong> ${formData.tipe}</p>
-                    <p><strong>Jenis Kerusakan:</strong> ${formData.kerusakan}</p>
-                    <p><strong>Kelengkapan:</strong> ${formData.kelengkapan}</p>
-                `;
+          <p><strong>Nomer:</strong> ${formData.nomer}</p>
+          <p><strong>Tanggal:</strong> ${formData.tanggal}</p>
+          <p><strong>Device:</strong> ${formData.service}</p>
+          <p><strong>Merek:</strong> ${formData.merek}</p>
+          <p><strong>Tipe:</strong> ${formData.tipe}</p>
+          <p><strong>Jenis Kerusakan:</strong> ${formData.kerusakan}</p>
+          <p><strong>Kelengkapan:</strong> ${formData.kelengkapan}</p>
+        `;
       } else {
         reviewContainer.innerHTML = '<p>No data available to review.</p>';
       }
     });
-
-    function reviewForm() {
-      const form = document.querySelector('.form-group');
-      const penanganan = document.getElementById('penanganan').value;
-      const biaya = document.getElementById('biaya').value;
-
-      const formData = JSON.parse(localStorage.getItem('formData'));
-      if (formData) {
-        formData.penanganan = penanganan;
-        formData.biaya = biaya;
-        localStorage.setItem('allFormData', JSON.stringify(formData));
-        window.location.href = '#';
-      }
-    }
   </script>
 </body>
-
 </html>
